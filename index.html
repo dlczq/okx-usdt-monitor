@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>OKX USDT C2C</title>
+
+<style>
+body{
+    margin:0;
+    background:#081c3a;
+    color:white;
+    font-family:Arial;
+    text-align:center;
+}
+
+h1{
+    margin-top:40px;
+}
+
+table{
+    margin:30px auto;
+    width:90%;
+    max-width:600px;
+    border-collapse:collapse;
+}
+
+th{
+    background:#1b3c8c;
+    padding:12px;
+}
+
+td{
+    padding:10px;
+    border-bottom:1px solid rgba(255,255,255,0.1);
+}
+
+.price{
+    color:#00ff9d;
+    font-weight:bold;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>OKX USDT C2C</h1>
+
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Price</th>
+<th>Merchant</th>
+<th>Limit</th>
+</tr>
+</thead>
+
+<tbody id="sell"></tbody>
+
+</table>
+
+<script>
+
+async function loadData(){
+
+let url =
+"https://api.allorigins.win/raw?url=" +
+encodeURIComponent(
+"https://p2p.okx.com/v2/c2c/tradingOrders/books?quoteCurrency=CNY&baseCurrency=USDT&side=sell&page=1&size=10"
+);
+
+try{
+
+let r = await fetch(url);
+let j = await r.json();
+
+let list = j.data.sell;
+
+let html="";
+
+list.slice(0,10).forEach((item,i)=>{
+
+html += `
+<tr>
+<td>${i+1}</td>
+<td class="price">${item.price}</td>
+<td>${item.nickName}</td>
+<td>${item.minAmount} - ${item.maxAmount}</td>
+</tr>
+`;
+
+});
+
+document.getElementById("sell").innerHTML = html;
+
+}catch(e){
+
+document.getElementById("sell").innerHTML =
+"<tr><td colspan='4'>º”‘ÿ ß∞‹</td></tr>";
+
+}
+
+}
+
+loadData();
+
+setInterval(loadData,10000);
+
+</script>
+
+</body>
+</html>
