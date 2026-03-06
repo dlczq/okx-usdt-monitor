@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>OKX USDT 监控</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#0f172a;
+color:white;
+text-align:center;
+}
+
+h1{
+margin-top:40px;
+}
+
+#price{
+font-size:40px;
+margin:20px;
+color:#22c55e;
+}
+
+table{
+margin:auto;
+border-collapse:collapse;
+width:300px;
+}
+
+td{
+border-bottom:1px solid #333;
+padding:10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>OKX USDT 实时价格</h1>
+
+<div id="price">加载中...</div>
+
+<table id="table"></table>
+
+<script>
+
+async function getPrice(){
+
+let res = await fetch(
+"https://api.allorigins.win/raw?url=https://p2p.okx.com/v2/c2c/tradingOrders/books",
+{
+method:"POST",
+headers:{
+"content-type":"application/json"
+},
+body:JSON.stringify({
+quoteCurrency:"CNY",
+baseCurrency:"USDT",
+side:"sell",
+page:1,
+size:10
+})
+}
+)
+
+let data = await res.json()
+
+let list = data.data
+
+let table = document.getElementById("table")
+
+table.innerHTML=""
+
+let total = 0
+
+for(let i=0;i<list.length;i++){
+
+let price = parseFloat(list[i].price)
+
+total += price
+
+table.innerHTML += `
+<tr>
+<td>卖${i+1}</td>
+<td>${price}</td>
+</tr>
+`
+
+}
+
+let avg = (total/list.length).toFixed(2)
+
+document.getElementById("price").innerText = avg + " CNY"
+
+}
+
+getPrice()
+
+setInterval(getPrice,10000)
+
+</script>
+
+</body>
+</html>
