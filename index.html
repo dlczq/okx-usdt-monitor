@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>OKX USDT C2C</title>
+
+<style>
+body{
+background:#08142b;
+color:white;
+font-family:Arial;
+text-align:center;
+}
+
+h1{
+margin-top:40px;
+}
+
+.container{
+display:flex;
+justify-content:center;
+gap:40px;
+margin-top:40px;
+}
+
+table{
+background:#0f1c3d;
+border-radius:10px;
+padding:10px;
+}
+
+th,td{
+padding:8px 12px;
+}
+
+th{
+color:#9fb4ff;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>OKX USDT C2C</h1>
+
+<div class="container">
+
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Price</th>
+<th>Merchant</th>
+<th>Limit</th>
+</tr>
+</thead>
+
+<tbody id="buyTable"></tbody>
+</table>
+
+
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Price</th>
+<th>Merchant</th>
+<th>Limit</th>
+</tr>
+</thead>
+
+<tbody id="sellTable"></tbody>
+</table>
+
+</div>
+
+<script>
+
+async function loadData(){
+
+const res = await fetch("https://www.okx.com/v3/c2c/tradingOrders/books",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+baseCurrency:"USDT",
+quoteCurrency:"CNY",
+page:1,
+rows:10
+})
+});
+
+const data = await res.json();
+
+const buy = data.data.buy;
+const sell = data.data.sell;
+
+const buyTable = document.getElementById("buyTable");
+const sellTable = document.getElementById("sellTable");
+
+buyTable.innerHTML="";
+sellTable.innerHTML="";
+
+buy.forEach((item,i)=>{
+buyTable.innerHTML += `
+<tr>
+<td>${i+1}</td>
+<td>${item.price}</td>
+<td>${item.nickName}</td>
+<td>${item.minTradeAmount}-${item.maxTradeAmount}</td>
+</tr>
+`;
+});
+
+sell.forEach((item,i)=>{
+sellTable.innerHTML += `
+<tr>
+<td>${i+1}</td>
+<td>${item.price}</td>
+<td>${item.nickName}</td>
+<td>${item.minTradeAmount}-${item.maxTradeAmount}</td>
+</tr>
+`;
+});
+
+}
+
+loadData();
+
+setInterval(loadData,10000);
+
+</script>
+
+</body>
+</html>
