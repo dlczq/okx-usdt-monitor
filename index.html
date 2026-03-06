@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>OKX P2P Monitor</title>
+</head>
+<body>
+
+<h2>USDT P2P BUY TOP10</h2>
+<div id="list"></div>
+
+<script>
+async function load(){
+
+let url="https://www.okx.com/v3/c2c/tradingOrders/books?quoteCurrency=cny&baseCurrency=usdt&side=buy&page=1&size=10";
+
+let r=await fetch(url);
+let j=await r.json();
+
+let html="";
+
+j.data.buy.forEach((o,i)=>{
+html+= (i+1)+" - "+o.price+"<br>";
+});
+
+document.getElementById("list").innerHTML=html;
+
+}
+
+load();
+setInterval(load,5000);
+</script>
+
+</body>
+</html>
