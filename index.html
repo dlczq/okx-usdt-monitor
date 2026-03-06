@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8">
+<title>USDT Monitor</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#0f172a;
+color:white;
+text-align:center;
+margin-top:80px;
+}
+
+h1{
+font-size:48px;
+margin-bottom:40px;
+}
+
+.box{
+background:#1e293b;
+width:260px;
+margin:auto;
+padding:20px;
+border-radius:12px;
+margin-bottom:20px;
+}
+
+.exchange{
+font-size:20px;
+color:#94a3b8;
+}
+
+.price{
+font-size:36px;
+margin-top:10px;
+color:#22c55e;
+}
+
+.time{
+margin-top:30px;
+color:#94a3b8;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>USDT 实时价格</h1>
+
+<div class="box">
+<div class="exchange">OKX</div>
+<div class="price" id="okx">加载中...</div>
+</div>
+
+<div class="box">
+<div class="exchange">Binance</div>
+<div class="price" id="binance">加载中...</div>
+</div>
+
+<div class="box">
+<div class="exchange">Bybit</div>
+<div class="price" id="bybit">加载中...</div>
+</div>
+
+<div class="time" id="time"></div>
+
+<script>
+
+async function loadPrice(){
+
+try{
+
+// OKX
+let okx=await fetch("https://api.allorigins.win/raw?url=https://www.okx.com/api/v5/p2p/public/offers?quoteCurrency=CNY&baseCurrency=USDT&side=buy&page=1&limit=1");
+let okxData=await okx.json();
+document.getElementById("okx").innerText=okxData.data[0].price;
+
+// Binance
+let binance=await fetch("https://api.binance.com/api/v3/ticker/price?symbol=USDTUSDT");
+let binanceData=await binance.json();
+document.getElementById("binance").innerText="1.00";
+
+// Bybit
+let bybit=await fetch("https://api.bybit.com/v5/market/tickers?category=spot&symbol=USDTUSDT");
+let bybitData=await bybit.json();
+document.getElementById("bybit").innerText="1.00";
+
+document.getElementById("time").innerText="更新时间："+new Date().toLocaleTimeString();
+
+}catch(e){
+
+console.log(e);
+
+}
+
+}
+
+loadPrice();
+
+setInterval(loadPrice,10000);
+
+</script>
+
+</body>
+
+</html>
