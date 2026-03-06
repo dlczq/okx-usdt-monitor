@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<title>OKX USDT C2C</title>
+
+<style>
+
+body{
+background:#0b1d3a;
+color:white;
+font-family:Arial;
+text-align:center;
+}
+
+.container{
+display:flex;
+justify-content:center;
+gap:40px;
+margin-top:40px;
+}
+
+table{
+background:#142c55;
+border-radius:10px;
+padding:10px;
+}
+
+th,td{
+padding:8px 12px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>OKX USDT C2C</h1>
+
+<div class="container">
+
+<table>
+
+<thead>
+<tr>
+<th>#</th>
+<th>Price</th>
+<th>Merchant</th>
+<th>Limit</th>
+</tr>
+</thead>
+
+<tbody id="buy"></tbody>
+
+</table>
+
+<table>
+
+<thead>
+<tr>
+<th>#</th>
+<th>Price</th>
+<th>Merchant</th>
+<th>Limit</th>
+</tr>
+</thead>
+
+<tbody id="sell"></tbody>
+
+</table>
+
+</div>
+
+
+<script>
+
+async function load(){
+
+const buyRes = await fetch("https://api.allorigins.win/raw?url=https://p2p.okx.com/v2/c2c/tradingOrders/books",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+quoteCurrency:"CNY",
+baseCurrency:"USDT",
+side:"buy",
+page:1,
+rows:10
+})
+})
+
+const buy = await buyRes.json()
+
+const sellRes = await fetch("https://api.allorigins.win/raw?url=https://p2p.okx.com/v2/c2c/tradingOrders/books",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+quoteCurrency:"CNY",
+baseCurrency:"USDT",
+side:"sell",
+page:1,
+rows:10
+})
+})
+
+const sell = await sellRes.json()
+
+const buyTable = document.getElementById("buy")
+const sellTable = document.getElementById("sell")
+
+buyTable.innerHTML=""
+sellTable.innerHTML=""
+
+buy.data.forEach((o,i)=>{
+
+buyTable.innerHTML+=`
+<tr>
+<td>${i+1}</td>
+<td>${o.price}</td>
+<td>${o.nickName}</td>
+<td>${o.minTrade}-${o.maxTrade}</td>
+</tr>
+`
+
+})
+
+sell.data.forEach((o,i)=>{
+
+sellTable.innerHTML+=`
+<tr>
+<td>${i+1}</td>
+<td>${o.price}</td>
+<td>${o.nickName}</td>
+<td>${o.minTrade}-${o.maxTrade}</td>
+</tr>
+`
+
+})
+
+}
+
+load()
+
+setInterval(load,10000)
+
+</script>
+
+</body>
+</html>
