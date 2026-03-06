@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8">
+<title>OKX USDT C2C 盘口监控</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#0f172a;
+color:white;
+text-align:center;
+margin-top:30px;
+}
+
+h1{
+font-size:36px;
+margin-bottom:20px;
+}
+
+.container{
+display:flex;
+justify-content:center;
+gap:40px;
+}
+
+table{
+border-collapse:collapse;
+background:#1e293b;
+width:420px;
+}
+
+th{
+background:#020617;
+padding:10px;
+}
+
+td{
+padding:8px;
+border-bottom:1px solid #334155;
+font-size:14px;
+}
+
+.buy{color:#22c55e;}
+.sell{color:#ef4444;}
+
+.info{
+margin-top:20px;
+font-size:20px;
+}
+
+.time{
+margin-top:10px;
+color:#94a3b8;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>OKX USDT C2C 盘口</h1>
+
+<div class="container">
+
+<table>
+<thead>
+<tr>
+<th colspan="4">买单前10</th>
+</tr>
+<tr>
+<th>排名</th>
+<th>价格</th>
+<th>商家</th>
+<th>限额</th>
+</tr>
+</thead>
+<tbody id="buyList"></tbody>
+</table>
+
+<table>
+<thead>
+<tr>
+<th colspan="4">卖单前10</th>
+</tr>
+<tr>
+<th>排名</th>
+<th>价格</th>
+<th>商家</th>
+<th>限额</th>
+</tr>
+</thead>
+<tbody id="sellList"></tbody>
+</table>
+
+</div>
+
+<div class="info" id="spread"></div>
+<div class="time" id="time"></div>
+
+<script>
+
+async function loadPrice(){
+
+try{
+
+// 买单
+let buyURL="https://api.allorigins.win/raw?url=https://www.okx.com/api/v5/p2p/public/offers?quoteCurrency=CNY&baseCurrency=USDT&side=buy&page=1&size=10";
+
+let buyRes=await fetch(buyURL);
+let buyData=await buyRes.json();
+
+let buyHTML="";
+
+buyData.data.slice(0,10).forEach((item,i)=>{
+
+let min=item.quoteMinAmountPerOrder;
+let max=item.quoteMaxAmountPerOrder;
+
+buyHTML+=`
+<tr>
+<td>${i+1}</td>
+<td class="buy">${item.price}</td>
+<td>${item.nickName}</td>
+<td>${min}-${max}</td>
+</tr>
+`;
+
+});
+
+document.getElementById("buyList").innerHTML=buyHTML;
+
+let bestBuy=parseFloat(buyData.data[0].price);
+
+
+// 卖单
+let sellURL="https://api.allorigins.win/raw?url=https://www.okx.com/api/v5/p2p/public/offers?quoteCurrency=CNY&baseCurrency=USDT&side=sell&page=1&size=10";
+
+let sellRes=await fetch(sellURL);
+let sellData=await sellRes.json();
+
+let sellHTML="";
+
+sellData.data.slice(0,10).forEach((item,i)=>{
+
+let min=item.quoteMinAmountPerOrder;
+let max=item.quoteMaxAmountPerOrder;
+
+sellHTML+=`
+<tr>
+<td>${i+1}</td>
+<td class="sell">${item.price}</td>
+<td>${item.nickName}</td>
+<td>${min}-${max}</td>
+</tr>
+`;
+
+});
+
+document.getElementById("sellList").innerHTML=sellHTML;
+
+let bestSell=parseFloat(sellData.data[0].price);
+
+
+// 盘口差价
+let spread=(bestSell-bestBuy).toFixed(3);
+
+document.getElementById("spread").innerText=
+"盘口差价："+spread;
+
+
+// 时间
+document.getElementById("time").innerText=
+"更新时间："+new Date().toLocaleTimeString();
+
+}catch(e){
+
+console.log(e);
+
+}
+
+}
+
+loadPrice();
+
+setInterval(loadPrice,10000);
+
+</script>
+
+</body>
+
+</html>
