@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>微信聊天模拟</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e5e5e5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .chat-container {
+            width: 100%;
+            max-width: 380px;
+            height: 100%;
+            background-color: white;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px;
+            font-size: 18px;
+            text-align: center;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        .messages {
+            flex-grow: 1;
+            padding: 10px;
+            overflow-y: auto;
+            background-color: #f0f0f0;
+        }
+        .message {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: flex-start;
+        }
+        .message .user {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .message .content {
+            background-color: #dcf8c6;
+            border-radius: 5px;
+            padding: 8px;
+            max-width: 70%;
+        }
+        .message.received .content {
+            background-color: #fff;
+            border: 1px solid #ddd;
+        }
+        .message.sent .content {
+            background-color: #dcf8c6;
+        }
+        .footer {
+            display: flex;
+            padding: 10px;
+            background-color: #fff;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            border-top: 1px solid #ddd;
+        }
+        .footer input {
+            flex-grow: 1;
+            padding: 8px;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+            margin-right: 10px;
+            font-size: 16px;
+        }
+        .footer button {
+            padding: 10px 15px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .footer button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="header">张三的聊天</div>
+        <div class="messages">
+            <div class="message received">
+                <div class="user">李四</div>
+                <div class="content">你好，今天过得怎么样？</div>
+            </div>
+            <div class="message sent">
+                <div class="user">张三</div>
+                <div class="content">挺不错的，你呢？</div>
+            </div>
+            <div class="message received">
+                <div class="user">李四</div>
+                <div class="content">今天还不错，忙了一天。</div>
+            </div>
+        </div>
+        <div class="footer">
+            <input type="text" placeholder="输入消息...">
+            <button onclick="sendMessage()">发送</button>
+        </div>
+    </div>
+
+    <script>
+        function sendMessage() {
+            const messageInput = document.querySelector('.footer input');
+            const messageText = messageInput.value.trim();
+
+            if (messageText) {
+                const messageContainer = document.createElement('div');
+                messageContainer.classList.add('message', 'sent');
+                
+                const userName = document.createElement('div');
+                userName.classList.add('user');
+                userName.textContent = '张三';
+                
+                const content = document.createElement('div');
+                content.classList.add('content');
+                content.textContent = messageText;
+
+                messageContainer.appendChild(userName);
+                messageContainer.appendChild(content);
+
+                document.querySelector('.messages').appendChild(messageContainer);
+                messageInput.value = '';
+                messageInput.focus();
+                document.querySelector('.messages').scrollTop = document.querySelector('.messages').scrollHeight;
+            }
+        }
+    </script>
+</body>
+</html>
