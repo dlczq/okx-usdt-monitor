@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>微信聊天界面</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f6f9;
+        }
+
+        .chat-container {
+            max-width: 480px;
+            margin: 20px auto;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            padding: 10px;
+            background-color: #4caf50;
+            color: white;
+            font-size: 18px;
+            border-radius: 10px;
+        }
+
+        .messages {
+            padding: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .message {
+            margin: 10px 0;
+            border-radius: 10px;
+            padding: 10px;
+            max-width: 75%;
+            word-wrap: break-word;
+        }
+
+        .message.user {
+            background-color: #d4f8e0;
+            text-align: left;
+        }
+
+        .message.other {
+            background-color: #e1f5fe;
+            text-align: right;
+        }
+
+        .input-box {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background-color: #fafafa;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .input-box input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            margin-right: 10px;
+            font-size: 16px;
+        }
+
+        .input-box button {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .input-box button:hover {
+            background-color: #45a049;
+        }
+
+        .upload-btn, .voice-btn {
+            background-color: #008cba;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            display: inline-block;
+            width: 45%;
+            margin-right: 10%;
+        }
+
+        .upload-btn:hover, .voice-btn:hover {
+            background-color: #007b8b;
+        }
+
+        .hidden-buttons {
+            display: none;
+        }
+
+        .show-more-btn {
+            background-color: #f1c40f;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .show-more-btn:hover {
+            background-color: #f39c12;
+        }
+
+        .message-time {
+            font-size: 12px;
+            color: #bbb;
+            text-align: right;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 480px) {
+            .chat-container {
+                margin: 10px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="chat-container">
+        <div class="header">
+            张三的聊天
+        </div>
+        <div class="messages">
+            <div class="message user">
+                你好！
+                <div class="message-time">15:00</div>
+            </div>
+            <div class="message other">
+                你好，今天过得怎么样？
+                <div class="message-time">15:01</div>
+            </div>
+            <div class="message user">
+                挺不错的，你呢？
+                <div class="message-time">15:02</div>
+            </div>
+        </div>
+
+        <div class="input-box">
+            <input type="text" placeholder="输入消息..." id="message-input">
+            <button id="send-btn">发送</button>
+        </div>
+
+        <div class="input-box">
+            <button class="upload-btn" onclick="openFilePicker()">选择背景图片</button>
+            <button class="voice-btn" onclick="recordVoice()">发送语音</button>
+        </div>
+
+        <button class="show-more-btn" onclick="toggleHiddenButtons()">更多功能</button>
+
+        <div class="hidden-buttons">
+            <button class="upload-btn" onclick="openFilePicker()">上传文件</button>
+            <button class="upload-btn" onclick="openFilePicker()">发送位置</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('send-btn').addEventListener('click', function() {
+            var message = document.getElementById('message-input').value;
+            if (message) {
+                var newMessage = document.createElement('div');
+                newMessage.classList.add('message', 'user');
+                newMessage.innerText = message;
+
+                var time = document.createElement('div');
+                time.classList.add('message-time');
+                time.innerText = getCurrentTime();
+
+                newMessage.appendChild(time);
+                document.querySelector('.messages').appendChild(newMessage);
+                document.getElementById('message-input').value = '';
+                document.querySelector('.messages').scrollTop = document.querySelector('.messages').scrollHeight;
+            }
+        });
+
+        function getCurrentTime() {
+            var now = new Date();
+            var hours = now.getHours().toString().padStart(2, '0');
+            var minutes = now.getMinutes().toString().padStart(2, '0');
+            return hours + ':' + minutes;
+        }
+
+        function openFilePicker() {
+            let input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.click();
+            input.onchange = function(event) {
+                let file = event.target.files[0];
+                if (file) {
+                    let reader = new FileReader();
+                    reader.onload = function(e) {
+                        let img = document.createElement('img');
+                        img.src = e.target.result;
+                        document.querySelector('.messages').style.backgroundImage = 'url(' + e.target.result + ')';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+        }
+
+        function recordVoice() {
+            alert("此功能正在开发中...");
+        }
+
+        function toggleHiddenButtons() {
+            const hiddenButtons = document.querySelector('.hidden-buttons');
+            if (hiddenButtons.style.display === "none" || hiddenButtons.style.display === "") {
+                hiddenButtons.style.display = "block";
+            } else {
+                hiddenButtons.style.display = "none";
+            }
+        }
+    </script>
+
+</body>
+</html>
