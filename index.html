@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>微信聊天记录生成器</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f0f0f0; margin: 0; padding: 0;}
+        .chat-container { width: 100%; max-width: 360px; margin: auto; background-color: #fff; border-radius: 10px; padding: 20px;}
+        .chat-header { background-color: #07c160; color: white; padding: 10px; text-align: center; font-size: 18px;}
+        .message { display: flex; margin-bottom: 10px; align-items: flex-end; }
+        .message .avatar { width: 40px; height: 40px; border-radius: 50%; background-color: #ccc; margin-right: 10px;}
+        .message .text { max-width: 250px; padding: 10px; border-radius: 10px; font-size: 14px; word-wrap: break-word;}
+        .message .text.left { background-color: #e0f8e0; color: #333; }
+        .message .text.right { background-color: #87cefa; color: white; margin-left: auto; }
+        .input-container { display: flex; padding: 10px; background-color: #f5f5f5; }
+        .input-container input { flex: 1; padding: 8px; border-radius: 20px; border: 1px solid #ddd; font-size: 14px; }
+        .input-container button { background-color: #07c160; color: white; border: none; border-radius: 50%; padding: 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">张三的聊天</div>
+        <div class="message-container" id="message-container">
+            <!-- 消息内容区 -->
+            <div class="message">
+                <div class="avatar"></div>
+                <div class="text left" contenteditable="true">你好！</div>
+            </div>
+            <div class="message">
+                <div class="avatar"></div>
+                <div class="text right" contenteditable="true">你好，今天过得怎么样？</div>
+            </div>
+            <div class="message">
+                <div class="avatar"></div>
+                <div class="text left" contenteditable="true">挺不错的，你呢？</div>
+            </div>
+        </div>
+        <div class="input-container">
+            <input type="text" id="message-input" placeholder="输入消息...">
+            <button id="send-button" onclick="sendMessage()">发送</button>
+        </div>
+    </div>
+
+    <script>
+        function sendMessage() {
+            let messageInput = document.getElementById('message-input');
+            let messageContainer = document.getElementById('message-container');
+            let messageText = messageInput.value.trim();
+            
+            if (messageText) {
+                let newMessage = document.createElement('div');
+                newMessage.classList.add('message');
+                
+                newMessage.innerHTML = `
+                    <div class="avatar"></div>
+                    <div class="text right" contenteditable="true"></div>
+                `;
+                
+                messageContainer.appendChild(newMessage);
+                messageInput.value = '';
+                messageContainer.scrollTop = messageContainer.scrollHeight;
+            }
+        }
+    </script>
+</body>
+</html>
